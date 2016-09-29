@@ -1,0 +1,41 @@
+:global
+  body, html, #main, #layout
+    padding: 0
+    margin: 0
+    font-family: 'GothamLight', 'Open Sans', Arial, Helvetica, sans-serif
+    min-height: 100vh
+    background-color: white
+    -webkit-font-smoothing: antialiased
+    // image preloader, make sure this doesn't happen on mobile
+    @media only screen and (min-width: 768px)
+      &::after
+        position: absolute
+        z-index: -1
+        overflow: hidden
+        width: 0
+        height: 0
+        //content: url('../img/bg1.png') url('../img/bg2.png') url('../img/bg3.png') url('../img/bg4.png')  url('../img/bg5.png') url('../img/bg6.png')
+  #main, #layout
+    display: flex
+    flex-direction: column
+
+  .page-enter
+    opacity: 0.01
+    transition: opacity 0.5s ease-out
+    z-index: 4
+    margin-right: -100vw
+  .page-enter.page-enter-active
+    opacity: 1
+  .page-leave
+    opacity: 1
+    transition: opacity 0.5s ease-out
+    z-index: 5
+  .page-leave.page-leave-active
+    opacity: 0
+
+  .error
+    color: red
+
+.transitionContainer
+  display: flex
+  flex: 1 0 auto

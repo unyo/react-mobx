@@ -1,0 +1,5 @@
+Timestamp: _TIMESTAMP_
+Branch Name: _BRANCH_
+Build Number: _BUILD_NUMBER_
+Build Key: _BUILD_KEY_
+Revision Number: _BAMBOO_REVISION_

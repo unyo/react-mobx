@@ -1,0 +1,17 @@
+@mixin common-page
+  flex: 1 0 auto
+  display: flex
+  flex-direction: column
+  max-width: 100%
+
+@mixin common-page-centered
+  @include common-page
+  align-items: center
+  justify-content: center
+
+:global
+  .common-page
+    @include common-page
+
+  .common-page-centered
+    @include common-page-centered
