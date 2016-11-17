@@ -46,7 +46,7 @@ module.exports = {
     })
   ],
   // sourcemaps can be slow on old computers
-  devtool: "inline-source-map",
+  devtool: "eval-source-map",
   //devtool: "inline-eval-cheap-source-map",
   devServer: {
     host: "0.0.0.0",

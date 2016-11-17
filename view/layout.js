@@ -2,24 +2,21 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { get } from 'lodash'
+import { observable } from 'mobx'
+import { Provider, observer } from 'mobx-react'
 
+import Model from '../model/index'
 import CSS from '../css/layout.sass'
 
+@observer
 export default class Layout extends React.Component {
+  @observable model = new Model()
   static contextTypes = {
     router: React.PropTypes.object.isRequired
-  }
-  static childContextTypes = {
-    store: React.PropTypes.object,
   }
   static defaultProps = {
     pageTransitionTime: 500,
     pageTransitionClass: 'page',
-  }
-  getChildContext() {
-    return {
-      store: {},
-    };
   }
   // todo: modify pageTransitionTime dependent on the previous path
   // and the new path
@@ -33,18 +30,20 @@ export default class Layout extends React.Component {
     console.log(`transition class: ${pageTransitionClass} time: ${pageTransitionTime}`)
     return (
       <div id='layout' className={CSS.layout} key='layout'>
-        <ReactCSSTransitionGroup
-          component='div'
-          className={CSS.transitionContainer}
-          transitionName={pageTransitionClass}
-          transitionEnterTimeout={pageTransitionTime}
-          transitionLeaveTimeout={pageTransitionTime}
-        >
-          {React.cloneElement(this.props.children, {
-            key: this.props.location.pathname+this.props.location.key,
-          })}
-        </ReactCSSTransitionGroup>
-        {/*<DevTools />*/}
+        <Provider model={this.model}>
+          <ReactCSSTransitionGroup
+            component='div'
+            className={CSS.transitionContainer}
+            transitionName={pageTransitionClass}
+            transitionEnterTimeout={pageTransitionTime}
+            transitionLeaveTimeout={pageTransitionTime}
+          >
+            {React.cloneElement(this.props.children, {
+              key: this.props.location.pathname+this.props.location.key,
+            })}
+          </ReactCSSTransitionGroup>
+          {/*<DevTools />*/}
+        </Provider>
       </div>
     )
   }
