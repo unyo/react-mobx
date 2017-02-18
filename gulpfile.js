@@ -28,7 +28,7 @@ gulp.task('timestamp', function(cb) {
 gulp.task('package', ['default', 'timestamp'], function() {
   var branch = process.env.BRANCH;
   var buildnr = process.env.BUILDNUMBER;
-  var project_name = 'EXM-V2-Ocean-Compass';
+  var project_name = 'build';
   var archive_name = project_name+'.zip';
   if (branch && buildnr) {
     archive_name = project_name+'-'+branch+'.'+buildnr+'.zip';

@@ -28,7 +28,6 @@ module.exports = {
       { test: /\.png$/, loader: "url?limit=100000" },
       { test: /\.js(x)?$/, exclude: /node_modules/, loader: 'babel', query: { presets: ['es2015', 'stage-1', 'react'], plugins: ['transform-decorators-legacy', 'transform-runtime'] }},
       { test: /\.less$/, loader: "style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!less" },
-      { test: /\.swf$/, loader: 'file?name=[path][name].[ext]'},
     ]
   },
   postcss: function() {

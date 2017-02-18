@@ -10,7 +10,7 @@ import Index from './view/index'
 
 // https://github.com/reactjs/react-router/tree/master/examples/auth-flow
 function requireAuth(nextState, replace) {
-  if (!localStorage['ocean_auth_token']) {
+  if (!localStorage['auth_token']) {
     replace({
       pathname: '/login',
       query: { nextPathname: nextState.location.pathname },
