@@ -1,55 +1,108 @@
-var autoprefixer = require('autoprefixer');
-var Visualizer = require('webpack-visualizer-plugin');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const { getIfUtils, removeEmpty } = require('webpack-config-utils');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const autoprefixer = require('autoprefixer');
+const Visualizer = require('webpack-visualizer-plugin');
+
+const nodeEnv = process.env.NODE_ENV || 'development';
+const { ifDevelopment, ifProduction } = getIfUtils(nodeEnv);
 
 module.exports = {
   entry: './app.js',
   output: {
+    filename: ifProduction('[name]-bundle-[hash].js', '[name]-bundle.js'),
     path: __dirname+'/build',
-    filename: '[name].js',
-    publicPath: '/', // this only applies to webpack-dev-server
+    publicPath: ifProduction('/', '/'), // this only applies to webpack-dev-server
   },
   module: {
-    loaders: [
-      { test: /\.css$/, loader: "style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]" },
-      // https://reactjsnews.com/isomorphic-react-in-real-life
-      { test: /\.scss$/, loader: "style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass" },
-      { test: /\.sass$/, loader: "style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass?indentedSyntax" },
-      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url?limit=10000&mimetype=application/font-woff" },
-      { test: /\.(ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file" },
-      { test: /\.html$/, loader: "html" },
-      { test: /\.json$/, loader: "json"},
-      { test: /\.png$/, loader: "url?limit=100000" },
-      { test: /\.js(x)?$/, exclude: /node_modules/, loader: 'babel', query: { presets: ['es2015', 'stage-1', 'react', 'react-hmre'], plugins: ['transform-decorators-legacy', 'transform-runtime'] }},
-      { test: /\.less$/, loader: "style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!less" },
-    ]
+    rules: [
+      {
+        test: /\.(sass|scss)$/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              query: {
+                modules: true,
+                sourceMap: ifProduction(false, true),
+                importLoaders: 2,
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              }
+            },
+            // todo: autoprefixer
+            'postcss-loader',
+            'sass-loader'
+          ],
+        }),
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              query: {
+                modules: true,
+                sourceMap: ifProduction(false, true),
+                importLoaders: 2,
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              }
+            },
+            'postcss-loader',
+          ],
+        }),
+      },
+      {
+        test: /\.js/,
+        use: ['babel-loader?cacheDirectory'],
+        exclude: /node_modules/,
+      },
+      { test: /\.json$/, use: [ "json-loader" ] },
+      { test: /\.(jpe?g|png|eot|svg|otf|woff2?)(\?v=[0-9]\.[0-9]\.[0-9])?$/, use: [ ifProduction([ "url-loader", { limit: 100000 } ], "file-loader") ] },
+    ],
   },
-  postcss: function() {
-    return [autoprefixer];
-  },
-  plugins: [
-    /*
+  plugins: removeEmpty([
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        postcss: [ autoprefixer ],
+      }
+    }),
     new Visualizer(),
     // https://gist.github.com/Couto/b29676dd1ab8714a818f
-    new webpack.ProvidePlugin({
-      'Promise': 'exports?global.Promise!es6-promise',
-      'fetch': 'exports?self.fetch!whatwg-fetch'
-    }),
-    new webpack.optimize.UglifyJsPlugin({minimize: true}),
-    */
+    ifProduction(
+      new webpack.ProvidePlugin({
+        'Promise': 'exports?global.Promise!es6-promise',
+        'fetch': 'exports?self.fetch!whatwg-fetch'
+      })
+    ),
+    ifProduction(
+      new webpack.optimize.UglifyJsPlugin({minimize: true})
+    ),
     // http://javascriptplayground.com/blog/2016/07/webpack-html-plugin/
     new HtmlWebpackPlugin({
-      template: 'index.html',
+      hash: ifProduction(true, false),
+      template: 'index.ejs',
       inject: 'body',
-    })
-  ],
+      environment: nodeEnv,
+    }),
+    ifProduction(new CopyWebpackPlugin([{ from: 'assets', to: 'assets' }])),
+    ifProduction(
+      new ExtractTextPlugin('[name]-bundle-[hash].css'),
+      new ExtractTextPlugin('[name]-bundle.css')
+    ),
+  ]),
   // sourcemaps can be slow on old computers
-  devtool: "eval-source-map",
+  devtool: ifDevelopment('eval-source-map', 'source-map'),
   //devtool: "inline-eval-cheap-source-map",
-  devServer: {
+  devServer: ifDevelopment({
     host: "0.0.0.0",
     port: 8000,
-    historyApiFallback: true
-  },
+    historyApiFallback: true,
+    hot: true,
+  }),
 };

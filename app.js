@@ -20,7 +20,7 @@ function requireAuth(nextState, replace) {
   return true
 }
 
-module.exports = render((
+render((
   <Router history={history}>
     <Route path='/' component={Layout}>
       <IndexRoute component={Index} />

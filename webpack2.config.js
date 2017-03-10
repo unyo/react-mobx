@@ -1,4 +1,4 @@
-// https://medium.com/selleo/perfectly-simple-webpack-2-setup-8b223e2ae0bd#.vohsy37d1
+// https://medium.com/selleo/perfectly-simple-webpack-2-setup-8b223e2ae0bd#.gdjdt662y
 
 const path = require('path');
 const webpack = require('webpack');
