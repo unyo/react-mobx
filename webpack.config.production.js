@@ -6,10 +6,6 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: {
     bundle: './app.js',
-    // import the sdk so we can host the demo using the admin tool
-    // we import it outside of the bundle because the bundle takes a while to
-    // load and the client times out over VPN
-    sdk: 'exm-sdk-client/src/index.js'
   },
   output: {
     path: __dirname+'/build',
