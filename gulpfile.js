@@ -5,12 +5,17 @@ var gsub = require('gulp-gsub');
 var git = require('git-rev');
 // https://stackoverflow.com/questions/40573196/using-webpack-2-from-gulp-webpack-stream-for-webpack-2
 var webpack2 = require('webpack');
+var clean = require('gulp-rimraf');
 
-gulp.task('default', function() {
+gulp.task('clean', [], function() {
+  return gulp.src("build/*", { read: false }).pipe(clean())
+})
+
+gulp.task('default', ['clean'], function() {
   return gulp.src('app.js')
     .pipe(webpack(require('./webpack.config.js'), webpack2))
-    .pipe(gulp.dest('build/'));
-});
+    .pipe(gulp.dest('build/'))
+})
 
 gulp.task('timestamp', function(cb) {
   git.long(function(commit) {
@@ -23,19 +28,19 @@ gulp.task('timestamp', function(cb) {
         .pipe(gsub({source: '_BAMBOO_REVISION_', target: process.env.CHANGELIST || commit || "No CHANGELIST variable set" }))
         .pipe(gulp.dest('build/'))
         .on('end', cb)
-    });
-  });
+    })
+  })
 })
 
 gulp.task('package', ['default', 'timestamp'], function() {
-  var branch = process.env.BRANCH;
-  var buildnr = process.env.BUILDNUMBER;
-  var project_name = 'build';
-  var archive_name = project_name+'.zip';
+  var branch = process.env.BRANCH
+  var buildnr = process.env.BUILDNUMBER
+  var project_name = 'build'
+  var archive_name = project_name+'.zip'
   if (branch && buildnr) {
-    archive_name = project_name+'-'+branch+'.'+buildnr+'.zip';
+    archive_name = project_name+'-'+branch+'.'+buildnr+'.zip'
   }
   return gulp.src(['build/**/*', '!build/'+project_name+'*.zip'])
     .pipe(zip(archive_name))
-    .pipe(gulp.dest('build'));
-});
+    .pipe(gulp.dest('build'))
+})

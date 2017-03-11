@@ -4,7 +4,7 @@
 npm update
 
 ## Usage
-npm install && npm start
+npm install && npm install -g webpack-dev-server && npm start
 
 ## Building
 npm build

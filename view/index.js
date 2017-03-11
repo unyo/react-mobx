@@ -13,6 +13,7 @@ export default class Index extends React.Component {
     this.color = (this.color=='black') ? 'green' : 'black'
   }
   render() {
+    const { location, push, goBack } = this.props.router
     return (
       <div
         id='index'

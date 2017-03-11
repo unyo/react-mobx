@@ -3,6 +3,7 @@
 // https://github.com/mhaagens/react-mobx-react-router4-boilerplate
 
 const webpack = require('webpack')
+const { resolve } = require('path')
 const { getIfUtils, removeEmpty } = require('webpack-config-utils')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -14,12 +15,29 @@ const Visualizer = require('webpack-visualizer-plugin')
 const nodeEnv = process.env.NODE_ENV || 'development'
 const { ifDevelopment, ifProduction } = getIfUtils(nodeEnv)
 
+const port = '8000'
+const buildPath = '/build'
+const outputPath = ifProduction('/', '/')
+
 module.exports = {
-  entry: './app.js',
+  entry: {
+    app: 'app.js',
+    vendor: [
+      'react',
+      'react-dom',
+      'react-router',
+      'mobx',
+      'mobx-react',
+      'mobx-react-router'
+    ],
+  },
   output: {
     filename: ifProduction('[name]-bundle-[hash].js', '[name]-bundle.js'),
-    path: __dirname+'/build',
-    publicPath: ifProduction('/', '/'), // this only applies to webpack-dev-server
+    path: resolve(__dirname, buildPath),
+    publicPath: outputPath, // this only applies to webpack-dev-server
+  },
+  resolve: {
+    modules: [ "node_modules", __dirname, ],
   },
   module: {
     rules: [
@@ -93,13 +111,22 @@ module.exports = {
       }
     ],
   },
+  // sourcemaps can be slow on old computers
+  devtool: ifDevelopment('eval-source-map', 'source-map'),
+  //devtool: "inline-eval-cheap-source-map",
+  devServer: ifDevelopment({
+    host: "0.0.0.0",
+    port: port,
+    historyApiFallback: true,
+    hot: true,
+    contentBase: resolve(__dirname, buildPath),
+    publicPath: outputPath,
+  }),
   plugins: removeEmpty([
-    ifProduction(
-      new webpack.NamedModulesPlugin()
-    ),
     ifDevelopment(
       new webpack.HotModuleReplacementPlugin()
     ),
+    new webpack.NamedModulesPlugin(),
     ifProduction(
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
@@ -145,13 +172,4 @@ module.exports = {
       new ExtractTextPlugin('[name]-bundle.css')
     ),
   ]),
-  // sourcemaps can be slow on old computers
-  devtool: ifDevelopment('eval-source-map', 'source-map'),
-  //devtool: "inline-eval-cheap-source-map",
-  devServer: ifDevelopment({
-    host: "0.0.0.0",
-    port: 8000,
-    historyApiFallback: true,
-    hot: true,
-  }),
 }
