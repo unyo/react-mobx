@@ -3,10 +3,12 @@ var webpack = require('webpack-stream');
 var zip = require('gulp-zip');
 var gsub = require('gulp-gsub');
 var git = require('git-rev');
+// https://stackoverflow.com/questions/40573196/using-webpack-2-from-gulp-webpack-stream-for-webpack-2
+var webpack2 = require('webpack');
 
 gulp.task('default', function() {
   return gulp.src('app.js')
-    .pipe(webpack(require('./webpack.config.production.js')))
+    .pipe(webpack(require('./webpack.config.js'), webpack2))
     .pipe(gulp.dest('build/'));
 });
 
