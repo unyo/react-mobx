@@ -156,7 +156,7 @@ module.exports = {
     // http://javascriptplayground.com/blog/2016/07/webpack-html-plugin/
     new HtmlWebpackPlugin({
       hash: ifProduction(true, false),
-      template: 'index.ejs',
+      template: 'index.html',
       inject: 'body',
       environment: nodeEnv,
     }),
