@@ -32,7 +32,6 @@ module.exports = {
       'history',
       'jquery',
       'lodash',
-      'moment',
       ifProduction('es6-promise'),
       ifProduction('whatwg-fetch'),
     ]),
