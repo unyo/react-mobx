@@ -1,4 +1,5 @@
 # react-mobx
+A simple, lightweight React MobX starter kit with SASS + CSS Modules
 
 ## Upgrading package.json
 npm update
@@ -11,3 +12,5 @@ npm build
 
 ## Style Guide
 - Use 2 spaces for indentation
+
+## Todo

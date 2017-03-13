@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { get } from 'lodash'
 import { observable } from 'mobx'
 import { observer } from 'mobx-react'

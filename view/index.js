@@ -13,7 +13,6 @@ export default class Index extends React.Component {
     this.color = (this.color=='black') ? 'green' : 'black'
   }
   render() {
-    const { location, push, goBack } = this.props.router
     return (
       <div
         id='index'
@@ -21,7 +20,7 @@ export default class Index extends React.Component {
         onClick={this.toggleColor}
         style={{color: this.color}}
       >
-        Hello world!
+        Hello World!
       </div>
     )
   }

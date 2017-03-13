@@ -22,14 +22,20 @@ const outputPath = ifProduction('/', '/')
 module.exports = {
   entry: {
     app: 'app.js',
-    vendor: [
+    vendor: removeEmpty([
       'react',
       'react-dom',
-      'react-router',
+      'react-router-dom',
       'mobx',
       'mobx-react',
-      'mobx-react-router'
-    ],
+      ifDevelopment('mobx-react-devtools'),
+      'history',
+      'jquery',
+      'lodash',
+      'moment',
+      ifProduction('es6-promise'),
+      ifProduction('whatwg-fetch'),
+    ]),
   },
   output: {
     filename: ifProduction('[name]-bundle-[hash].js', '[name]-bundle.js'),
@@ -127,13 +133,11 @@ module.exports = {
       new webpack.HotModuleReplacementPlugin()
     ),
     new webpack.NamedModulesPlugin(),
-    ifProduction(
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        filename: 'vendor.bundle.js',
-        minChunks: Infinity
-      })
-    ),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.bundle.js',
+      minChunks: Infinity
+    }),
     ifProduction(
       new webpack.optimize.AggressiveMergingPlugin()
     ),
