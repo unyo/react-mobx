@@ -16,22 +16,22 @@ const nodeEnv = process.env.NODE_ENV || 'development'
 const { ifDevelopment, ifProduction } = getIfUtils(nodeEnv)
 
 const port = '8000'
-const buildPath = '/build'
+const buildPath = './build'
 const outputPath = ifProduction('/', '/')
 
 module.exports = {
   entry: {
-    app: 'app.js',
+    app: 'index.js',
     vendor: removeEmpty([
       'react',
       'react-dom',
       'react-router-dom',
+      ifDevelopment('react-hot-loader/patch'),
       'mobx',
       'mobx-react',
       ifDevelopment('mobx-react-devtools'),
       'history',
       'jquery',
-      'lodash',
       ifProduction('es6-promise'),
       ifProduction('whatwg-fetch'),
     ]),
@@ -128,18 +128,14 @@ module.exports = {
     publicPath: outputPath,
   }),
   plugins: removeEmpty([
-    ifDevelopment(
-      new webpack.HotModuleReplacementPlugin()
-    ),
+    ifDevelopment(new webpack.HotModuleReplacementPlugin()),
     new webpack.NamedModulesPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       filename: 'vendor.bundle.js',
       minChunks: Infinity
     }),
-    ifProduction(
-      new webpack.optimize.AggressiveMergingPlugin()
-    ),
+    ifProduction(new webpack.optimize.AggressiveMergingPlugin()),
     new webpack.LoaderOptionsPlugin({
       minimize: ifProduction(true, false),
       options: {
@@ -147,7 +143,9 @@ module.exports = {
       }
     }),
     ifProduction(
-      new Visualizer()
+      new Visualizer({
+        filename: './stats.html',
+      })
     ),
     // https://gist.github.com/Couto/b29676dd1ab8714a818f
     ifProduction(

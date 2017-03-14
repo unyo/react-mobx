@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { get } from 'lodash'
 import { observable } from 'mobx'
 import { observer } from 'mobx-react'
 import DevTools from 'mobx-react-devtools'
