@@ -23,13 +23,15 @@ module.exports = {
   entry: {
     app: 'index.js',
     vendor: removeEmpty([
+      'core-js',
       'react',
       'react-dom',
       'react-router-dom',
+      'react-hot-loader',
       ifDevelopment('react-hot-loader/patch'),
       'mobx',
       'mobx-react',
-      ifDevelopment('mobx-react-devtools'),
+      'mobx-react-devtools',
       'history',
       'jquery',
       ifProduction('es6-promise'),
@@ -117,8 +119,8 @@ module.exports = {
     ],
   },
   // sourcemaps can be slow on old computers
-  devtool: ifDevelopment('eval-source-map', 'source-map'),
-  //devtool: "inline-eval-cheap-source-map",
+  devtool: ifDevelopment('source-map', 'source-map'),
+  //devtool: ifDevelopment('eval-source-map', 'source-map'),
   devServer: ifDevelopment({
     host: "0.0.0.0",
     port: port,
@@ -150,7 +152,6 @@ module.exports = {
     // https://gist.github.com/Couto/b29676dd1ab8714a818f
     ifProduction(
       new webpack.ProvidePlugin({
-        'Promise': 'exports-loader?global.Promise!es6-promise',
         'fetch': 'exports-loader?self.fetch!whatwg-fetch'
       })
     ),

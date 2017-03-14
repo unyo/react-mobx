@@ -1,10 +1,8 @@
 import { observable, computed } from 'mobx'
 
 export default class Model {
-  constructor(data = {}) {
-    if (!_.isEmpty(data)) {
-      this.parse(data)
-    }
+  constructor(data={}) {
+    this.parse(data)
   }
   @observable data
   handleFetch(requestUrl, options) {
@@ -42,7 +40,7 @@ export default class Model {
     }
     return this.handleFetch(requestUrl, options)
   }
-  parse(data) {
+  parse(data={}) {
     Object.assign(this, data)
     return data
   }

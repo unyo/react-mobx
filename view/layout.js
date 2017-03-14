@@ -12,7 +12,7 @@ export default class Layout extends React.Component {
     return (
       <div id='layout' className={CSS.layout}>
         {this.props.children}
-        <DevTools />
+        {/*<DevTools />*/}
       </div>
     )
   }

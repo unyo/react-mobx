@@ -20,7 +20,7 @@ export default class Index extends React.Component {
         onClick={this.toggleColor}
         style={{color: this.color}}
       >
-        Hello World!!!
+        Hello world!
       </div>
     )
   }
