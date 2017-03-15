@@ -33,7 +33,6 @@ module.exports = {
       'mobx-react-devtools',
       'history',
       'jquery',
-      ifProduction('es6-promise'),
       ifProduction('whatwg-fetch'),
     ]),
   },
