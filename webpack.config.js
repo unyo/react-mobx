@@ -23,7 +23,6 @@ module.exports = {
   entry: {
     app: 'index.js',
     vendor: removeEmpty([
-      'core-js',
       'react',
       'react-dom',
       'react-router-dom',
