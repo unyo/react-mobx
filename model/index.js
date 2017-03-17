@@ -1,5 +1,7 @@
 import { observable, computed } from 'mobx'
+import { model, field, session, belongsTo, hasMany, identifier } from 'mobx-decorated-models'
 
+// todo: integrate mobx-decorated-models
 export default class Model {
   constructor(data={}) {
     this.parse(data)
