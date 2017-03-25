@@ -11,6 +11,7 @@ export default class Index extends React.Component {
   @observable color = 'black'
   toggleColor = (e) => {
     this.color = (this.color=='black') ? 'green' : 'black'
+    this.props.model.data = this.color
   }
   render() {
     return (

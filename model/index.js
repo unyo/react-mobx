@@ -1,7 +1,9 @@
 import { observable, computed } from 'mobx'
 import { model, field, session, belongsTo, hasMany, identifier } from 'mobx-decorated-models'
+import remotedev from 'mobx-remotedev/lib/dev'
 
 // todo: integrate mobx-decorated-models
+@remotedev
 export default class Model {
   constructor(data={}) {
     this.parse(data)
