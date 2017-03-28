@@ -1,15 +1,17 @@
 import React from 'react'
 import { observer, inject } from 'mobx-react'
-import { observable } from 'mobx'
+import { observable, action } from 'mobx'
 
 import CSS from '../css/index.sass'
 
-// you should probably extend other classes from a base class like this one
 @inject('model')
 @observer
 export default class Index extends React.Component {
   @observable color = 'black'
-  toggleColor = (e) => {
+  // use @action.bound instead of an arrow function to bind things to this scope
+  // and also wrap everything in a transaction
+  @action.bound
+  toggleColor() {
     this.color = (this.color=='black') ? 'green' : 'black'
     this.props.model.data = this.color
   }
@@ -21,7 +23,7 @@ export default class Index extends React.Component {
         onClick={this.toggleColor}
         style={{color: this.color}}
       >
-        Hello world!
+        Hello {this.props.model.data}!
       </div>
     )
   }

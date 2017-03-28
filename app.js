@@ -2,7 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Link, IndexRoute } from 'react-router-dom'
 import { Provider, observer } from 'mobx-react'
-import { observable } from 'mobx'
+import { observable, useStrict } from 'mobx'
+
+// always wrap anything that modifies a mobx state with @action
+// this helps ensure people don't get weird errors
+useStrict(true)
 
 import Layout from './view/layout'
 import Index from './view/index'
