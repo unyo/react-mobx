@@ -14,6 +14,7 @@ export default class Index extends React.Component {
   toggleColor() {
     this.color = (this.color=='black') ? 'green' : 'black'
     this.props.model.data = this.color
+    this.props.model.incrementCount()
   }
   render() {
     return (
@@ -23,7 +24,7 @@ export default class Index extends React.Component {
         onClick={this.toggleColor}
         style={{color: this.color}}
       >
-        Hello {this.props.model.data}!
+        Hello world {this.props.model.count}!
       </div>
     )
   }

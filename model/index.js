@@ -1,4 +1,4 @@
-import { observable, computed } from 'mobx'
+import { observable, computed, action } from 'mobx'
 import { model, field, session, belongsTo, hasMany, identifier } from 'mobx-decorated-models'
 import remotedev from 'mobx-remotedev/lib/dev'
 
@@ -8,7 +8,11 @@ export default class Model {
   constructor(data={}) {
     this.parse(data)
   }
-  @observable data
+  @observable data = 'black'
+  @observable count = 0
+  @action incrementCount() {
+    this.count++
+  }
   handleFetch(requestUrl, options) {
     return fetch(requestUrl, options).then((resp) => {
       if (resp.ok) return resp.text().then((text) => {
@@ -37,7 +41,7 @@ export default class Model {
     var options = {
       method: method,
       headers: {
-        'Authorization': 'Bearer '+localStorage['ocean_auth_token'],
+        'Authorization': 'Bearer '+localStorage['auth_token'],
         'Content-Type': 'application/json'
       },
       body: body
