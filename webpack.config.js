@@ -19,7 +19,10 @@ const port = '8000'
 const buildPath = './build'
 const outputPath = ifProduction('/', '/')
 
-const sassConfig = [
+const sassConfig = removeEmpty([
+  ifDevelopment({
+    loader: 'style-loader',
+  }),
   {
     loader: 'css-loader',
     query: {
@@ -38,9 +41,12 @@ const sassConfig = [
     }
   },
   'sass-loader'
-]
+])
 
 const cssConfig = [
+  ifDevelopment({
+    loader: 'style-loader',
+  }),
   {
     loader: 'css-loader',
     query: {
