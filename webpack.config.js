@@ -61,7 +61,14 @@ module.exports = {
               }
             },
             // todo: autoprefixer
-            'postcss-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: (loader) => [
+                  autoprefixer()
+                ]
+              }
+            },
             'sass-loader'
           ],
         }),
@@ -171,5 +178,6 @@ module.exports = {
       new ExtractTextPlugin('[name]-bundle-[hash].css'),
       new ExtractTextPlugin('[name]-bundle.css')
     ),
+    new webpack.optimize.ModuleConcatenationPlugin()
   ]),
 }
