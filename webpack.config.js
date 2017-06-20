@@ -19,6 +19,47 @@ const port = '8000'
 const buildPath = './build'
 const outputPath = ifProduction('/', '/')
 
+const sassConfig = [
+  {
+    loader: 'css-loader',
+    query: {
+      modules: true,
+      sourceMap: ifProduction(false, true),
+      importLoaders: 2,
+      localIdentName: '[name]__[local]__[hash:base64:5]'
+    }
+  },
+  {
+    loader: 'postcss-loader',
+    options: {
+      plugins: (loader) => [
+        autoprefixer()
+      ]
+    }
+  },
+  'sass-loader'
+]
+
+const cssConfig = [
+  {
+    loader: 'css-loader',
+    query: {
+      modules: true,
+      sourceMap: ifProduction(false, true),
+      importLoaders: 1,
+      localIdentName: '[name]__[local]__[hash:base64:5]'
+    }
+  },
+  {
+    loader: 'postcss-loader',
+    options: {
+      plugins: (loader) => [
+        autoprefixer()
+      ]
+    }
+  },
+]
+
 module.exports = {
   entry: {
     app: 'index.js',
@@ -46,51 +87,22 @@ module.exports = {
   },
   module: {
     rules: [
-      {
+      removeEmpty({
         test: /\.(sass|scss)$/,
-        loader: ExtractTextPlugin.extract({
+        loader: ifProduction(ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: [
-            {
-              loader: 'css-loader',
-              query: {
-                modules: true,
-                sourceMap: ifProduction(false, true),
-                importLoaders: 2,
-                localIdentName: '[name]__[local]__[hash:base64:5]'
-              }
-            },
-            // todo: autoprefixer
-            {
-              loader: 'postcss-loader',
-              options: {
-                plugins: (loader) => [
-                  autoprefixer()
-                ]
-              }
-            },
-            'sass-loader'
-          ],
-        }),
-      },
-      {
+          use: sassConfig,
+        })),
+        use: ifDevelopment(sassConfig)
+      }),
+      removeEmpty({
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract({
+        loader: ifProduction(ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: [
-            {
-              loader: 'css-loader',
-              query: {
-                modules: true,
-                sourceMap: ifProduction(false, true),
-                importLoaders: 2,
-                localIdentName: '[name]__[local]__[hash:base64:5]'
-              }
-            },
-            'postcss-loader',
-          ],
-        }),
-      },
+          use: cssConfig,
+        })),
+        use: ifDevelopment(cssConfig)
+      }),
       {
         test: /\.js(x)?$/,
         use: [
@@ -143,12 +155,6 @@ module.exports = {
       minChunks: Infinity
     }),
     ifProduction(new webpack.optimize.AggressiveMergingPlugin()),
-    new webpack.LoaderOptionsPlugin({
-      minimize: ifProduction(true, false),
-      options: {
-        postcss: [ autoprefixer ],
-      }
-    }),
     ifProduction(
       new Visualizer({
         filename: './stats.html',
