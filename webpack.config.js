@@ -12,21 +12,21 @@ const autoprefixer = require('autoprefixer')
 const Visualizer = require('webpack-visualizer-plugin')
 
 const nodeEnv = process.env.NODE_ENV || 'development'
-const { ifDevelopment, ifProduction } = getIfUtils(nodeEnv)
+const { ifProd, ifNotProd } = getIfUtils(nodeEnv)
 
 const port = '8000'
 const buildPath = './build'
-const outputPath = ifProduction('/', '/')
+const outputPath = ifProd('/', '/')
 
 const sassConfig = removeEmpty([
-  ifDevelopment({
+  ifNotProd({
     loader: 'style-loader',
   }),
   {
     loader: 'css-loader',
     query: {
       modules: true,
-      sourceMap: ifProduction(false, true),
+      sourceMap: true,
       importLoaders: 3,
       localIdentName: '[name]__[local]__[hash:base64:5]'
     }
@@ -52,15 +52,15 @@ const sassConfig = removeEmpty([
 ])
 
 const cssConfig = [
-  ifDevelopment({
+  ifNotProd({
     loader: 'style-loader',
   }),
   {
     loader: 'css-loader',
     query: {
       modules: true,
-      sourceMap: ifProduction(false, true),
-      importLoaders: 1,
+      sourceMap: ifProd(false, true),
+      importLoaders: 2,
       localIdentName: '[name]__[local]__[hash:base64:5]'
     }
   },
@@ -72,6 +72,9 @@ const cssConfig = [
       ]
     }
   },
+  {
+    loader: 'resolve-url-loader',
+  },
 ]
 
 module.exports = {
@@ -82,17 +85,17 @@ module.exports = {
       'react-dom',
       'react-router-dom',
       'react-hot-loader',
-      ifDevelopment('react-hot-loader/patch'),
+      ifNotProd('react-hot-loader/patch'),
       'mobx',
       'mobx-react',
       'mobx-react-devtools',
       'history',
       'jquery',
-      ifProduction('whatwg-fetch'),
+      ifProd('whatwg-fetch'),
     ]),
   },
   output: {
-    filename: ifProduction('[name]-bundle-[hash].js', '[name]-bundle.js'),
+    filename: ifProd('[name]-bundle-[hash].js', '[name]-bundle.js'),
     path: resolve(__dirname, buildPath),
     publicPath: outputPath, // this only applies to webpack-dev-server
   },
@@ -103,19 +106,19 @@ module.exports = {
     rules: [
       removeEmpty({
         test: /\.(sass|scss)$/,
-        loader: ifProduction(ExtractTextPlugin.extract({
+        loader: ifProd(ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: sassConfig,
         })),
-        use: ifDevelopment(sassConfig)
+        use: ifNotProd(sassConfig)
       }),
       removeEmpty({
         test: /\.css$/,
-        loader: ifProduction(ExtractTextPlugin.extract({
+        loader: ifProd(ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: cssConfig,
         })),
-        use: ifDevelopment(cssConfig)
+        use: ifNotProd(cssConfig)
       }),
       {
         test: /\.js(x)?$/,
@@ -136,7 +139,7 @@ module.exports = {
       {
         test: /\.(jpe?g|png|eot|svg|otf|woff2?)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: [
-          ifProduction(
+          ifProd(
             {
               loader: 'url-loader',
               options: {
@@ -150,10 +153,10 @@ module.exports = {
     ],
   },
   // sourcemaps can be slow on old computers
-  devtool: ifDevelopment('source-map', 'source-map'),
-  //devtool: ifDevelopment('eval-source-map', 'source-map'),
-  devServer: ifDevelopment({
-    host: "0.0.0.0",
+  devtool: ifNotProd('source-map', 'source-map'),
+  //devtool: ifNotProd('eval-source-map', 'source-map'),
+  devServer: ifNotProd({
+    host: '0.0.0.0',
     port: port,
     historyApiFallback: true,
     hot: true,
@@ -161,35 +164,38 @@ module.exports = {
     publicPath: outputPath,
   }),
   plugins: removeEmpty([
-    ifDevelopment(new webpack.HotModuleReplacementPlugin()),
+    ifNotProd(new webpack.HotModuleReplacementPlugin()),
     new webpack.NamedModulesPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       filename: 'vendor.bundle.js',
       minChunks: Infinity
     }),
-    ifProduction(new webpack.optimize.AggressiveMergingPlugin()),
-    ifProduction(
+    ifProd(new webpack.optimize.AggressiveMergingPlugin()),
+    ifProd(
       new Visualizer({
         filename: './stats.html',
       })
     ),
     // https://gist.github.com/Couto/b29676dd1ab8714a818f
-    ifProduction(
+    ifProd(
       new webpack.ProvidePlugin({
         'fetch': 'exports-loader?self.fetch!whatwg-fetch'
       })
     ),
     // http://javascriptplayground.com/blog/2016/07/webpack-html-plugin/
     new HtmlWebpackPlugin({
-      hash: ifProduction(true, false),
+      hash: ifProd(true, false),
       template: 'index.html',
       inject: 'body',
       environment: nodeEnv,
     }),
-    ifProduction(
+    ifProd(
       new ExtractTextPlugin('[name]-bundle-[hash].css')
     ),
-    new webpack.optimize.ModuleConcatenationPlugin()
+    // apparently this breaks hot reload
+    ifProd(
+      new webpack.optimize.ModuleConcatenationPlugin()
+    )
   ]),
 }

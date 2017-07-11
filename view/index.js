@@ -12,7 +12,7 @@ export default class Index extends React.Component {
   // and also wrap everything in a transaction
   @action.bound
   toggleColor() {
-    this.color = (this.color=='white') ? 'green' : 'white'
+    this.color = (this.color=='white') ? 'yellow' : 'white'
     this.props.model.data = this.color
     this.props.model.incrementCount()
   }
