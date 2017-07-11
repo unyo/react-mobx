@@ -7,12 +7,12 @@ import CSS from '../css/index.sass'
 @inject('model')
 @observer
 export default class Index extends React.Component {
-  @observable color = 'black'
+  @observable color = 'white'
   // use @action.bound instead of an arrow function to bind things to this scope
   // and also wrap everything in a transaction
   @action.bound
   toggleColor() {
-    this.color = (this.color=='black') ? 'green' : 'black'
+    this.color = (this.color=='white') ? 'green' : 'white'
     this.props.model.data = this.color
     this.props.model.incrementCount()
   }

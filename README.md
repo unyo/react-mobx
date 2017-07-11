@@ -13,4 +13,11 @@ npm build
 ## Style Guide
 - Use 2 spaces for indentation
 
-## Todo
+## Recommended Plugins for atom.io
+- emmet + emmet-jsx-css-modules (todo: use react-css-modules)
+- project-manager + project-colorize
+- platform-io-ide-terminal
+- language-babel
+- hyperclick + js-hyperclick
+- nice-index
+- file-icons

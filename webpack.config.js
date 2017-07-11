@@ -7,7 +7,6 @@ const { resolve } = require('path')
 const { getIfUtils, removeEmpty } = require('webpack-config-utils')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const autoprefixer = require('autoprefixer')
 const Visualizer = require('webpack-visualizer-plugin')
@@ -28,7 +27,7 @@ const sassConfig = removeEmpty([
     query: {
       modules: true,
       sourceMap: ifProduction(false, true),
-      importLoaders: 2,
+      importLoaders: 3,
       localIdentName: '[name]__[local]__[hash:base64:5]'
     }
   },
@@ -37,10 +36,19 @@ const sassConfig = removeEmpty([
     options: {
       plugins: (loader) => [
         autoprefixer()
-      ]
+      ],
+      sourceMap: true,
     }
   },
-  'sass-loader'
+  {
+    loader: 'resolve-url-loader',
+  },
+  {
+    loader: 'sass-loader',
+    options: {
+      sourceMap: true,
+    }
+  }
 ])
 
 const cssConfig = [
@@ -179,16 +187,8 @@ module.exports = {
       inject: 'body',
       environment: nodeEnv,
     }),
-    /*
     ifProduction(
-      new CopyWebpackPlugin(
-        [ { from: 'assets', to: 'assets' } ]
-      )
-    ),
-    */
-    ifProduction(
-      new ExtractTextPlugin('[name]-bundle-[hash].css'),
-      new ExtractTextPlugin('[name]-bundle.css')
+      new ExtractTextPlugin('[name]-bundle-[hash].css')
     ),
     new webpack.optimize.ModuleConcatenationPlugin()
   ]),
